@@ -15,10 +15,10 @@ export default function BookView() {
       const res = await fetch(`http://localhost:8000/books/book/${bookID}`);
       const json = await res.json();
       setBook(json);
-      setLoading(false);
     }
     fetchBook();
-  })
+    setLoading(false);
+  }, [])
 
 
   return (
