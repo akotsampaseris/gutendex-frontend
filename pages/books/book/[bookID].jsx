@@ -15,9 +15,9 @@ export default function BookView() {
       const res = await fetch(`http://localhost:8000/books/book/${bookID}`);
       const json = await res.json();
       setBook(json);
+      setLoading(false);
     }
     fetchBook();
-    setLoading(false);
   })
 
 
@@ -83,10 +83,37 @@ function BookDetails({book, loading}){
 }
 
 function PostBookReview({book}){
+  const [review, setReview] = useState('');
+  const [rating, setRating] = useState(5);
+
+
+  async function postReview(){
+    const res = await fetch(`http://localhost:8000/books/book/${book.id}/post-review`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        book: book,
+        bookReview: {},
+      })
+    })
+
+  }
+
+  function handleChange(e){
+    setSearchString(e.target.value);
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    postReview();
+  }
+
   return (
     <div className="mt-5 pt-5">
       <p className="text-xl text-blue-400">Your review for "{book.title}".</p>
-      <form className="pt-3">
+      <form className="pt-3" onSubmit={handleSubmit}>
         <label className="block flex pb-2">
           <span>Rating: </span>
           <select className="rounded bg-white text-black ml-2">       
