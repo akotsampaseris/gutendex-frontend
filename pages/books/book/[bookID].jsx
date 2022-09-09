@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import styles from '../../../styles/Home.module.css'
 import { useState, useEffect } from 'react';
 
 export default function Book() {
@@ -20,15 +19,15 @@ export default function Book() {
 
 
   return (
-    <div className={styles.container}>
+    <div className="container">
       <Head>
         <title>{book.title} | {book.author}</title>
         <meta name="description" content="NextJS app using Gutendex API" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h2 className={styles.title}>{book.title}</h2>
+      <main className="">
+        <h2 className="">{book.title}</h2>
         <Link href="/">Go back</Link>
       </main>
     </div>
