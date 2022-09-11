@@ -17,9 +17,7 @@ export default function BookView() {
       
       setBook(json);
     }
-    
     fetchBook();
-    console.log(book.reviews)
     setLoading(false);
   }, [])
 
@@ -52,14 +50,7 @@ export default function BookView() {
             <ReviewForm bookID={book.id} />
         </div>  
 
-        <div className="m-2 p-4">        
-            {book.reviews.map(review =>{
-                <div key={review.id}>
-                    <p>Rating: {review.rating}/5</p>
-                    <p>Comment:</p>
-                    <p>{reviews.comment}</p>
-                </div>
-            })}
+        <div className="m-2 p-4">  
         </div>  
       </main>
     </div>
