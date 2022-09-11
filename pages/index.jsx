@@ -1,11 +1,8 @@
 import Head from 'next/head'
 import Link from 'next/link';
-import { useRouter } from 'next/router'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function Home() {
-  const router = useRouter();
-
   const [loading, setLoading] = useState(false);
   const [searchString, setSearchString] = useState('');
   const [books, setBooks] = useState([]);
@@ -40,7 +37,7 @@ export default function Home() {
         <meta name="description" content="NextJS app using GutendexAPI" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="grid grid-cols-5 border-b-2 border-indigo-500 w-full p-6">
+      <div className="md:flex-col lg:grid grid-cols-5 border-b-2 border-indigo-500 w-full p-6">
         <div>
           <h1 className="text-2xl text-indigo-500">
             <Link href="/">Search GutendexAPI</Link>
@@ -62,7 +59,7 @@ export default function Home() {
           </form>
         </div>
       </div>
-      <main className="mx-auto p-4 w-8/12">
+      <main className="mx-auto py-4 lg:px-2 md:px-0 w-8/12">
         <BookList books={books} loading={loading} />
       </main>
     </div>
@@ -81,17 +78,16 @@ function BookList({books, loading}){
   return (
     <div>
       {books?.map(book => (
-        <div className="my-2 py-4 border-b border-indigo-500" key={book.id}>
+        <div className="my-2 py-2 border-b border-indigo-500" key={book.id}>
           <div className="text-xl text-indigo-500">
             <Link href={{pathname: `/books/book/${book.id}`}}>
               {book.title}
             </Link>
           </div>
-          <div className="flex py-1">
-            <p className='text-md text-indigo-300'>Author(s): </p> 
+          <div className="md:flex-col lg:flex py-1">
             <ul className="list-none">
             {book.authors?.map(author => {
-              return (<li className="pl-2 text-indigo-200" key={author.name}>{author.name}</li>)
+              return (<li className="md:text-sm text-indigo-200" key={author.name}>{author.name}</li>)
             })}
             </ul>
           </div>

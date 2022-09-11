@@ -1,31 +1,31 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react';
 
-const BookView = () => {
-  const router = useRouter();
-  const { bookID } = router.query;
 
-  const [book, setBook] = useState("");
-  const [reviews, setReviews] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+export async function getServerSideProps(context) {
+    const { bookID } = context.query;
 
-  useEffect(() => {
-    async function fetchBook() {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/book/${bookID}`);
-        const json = await res.json();
-        
-        setBook(json);
-        setReviews(json.reviews); 
-    }
-    fetchBook();
-    setLoading(false);
-  }, [])
+    // Fetch data from external API
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/book/${bookID}`);
+    var data = await res.json();
+  
+    // Pass data to the page via props
+    return { props: { data } }
+  }
 
 
-  return (
+const BookView = ({ data }) => {
+    const [book, setBook] = useState();
+    
+    useEffect(() => {
+            setBook(data)
+        }
+    )
+
+    if (!book) return <p>Loading...</p>
+    
+    return (
     <div className="container">
         <Head>
             <title>{book.title} | GutendexAPI</title>
@@ -39,22 +39,22 @@ const BookView = () => {
                 </h1>
             </div>
         </div>
-        <main className="px-4 mx-4 grid grid-cols-2 gap-">   
-            <div className='border-r border-solid border-indigo-500'>
+        <main className="h-0 px-4 mx-4 grid grid-cols-2 gap-4">   
+            <div>
                 <div className="m-2 p-4">        
-                    <BookDetails book={book} loading={loading} />
+                    <BookDetails book={book} />
                 </div>  
                 <div className="m-2 p-4">
                     <p className="text-xl text-blue-400">Your review of 
                         <span className='text-blue-500 italic'> {book.title}</span>.
                     </p>
-                    <ReviewForm book={book} reviews={reviews} setReviews={setReviews}/>
+                    <ReviewForm book={book} setBook={setBook} />
                 </div>
             </div>  
-            <div>
+            <div className='h-full overflow-y-auto'>
                 <div className="m-2 p-4">    
                     <p className='text-2xl text-blue-400'>Reviews</p>
-                    <ReviewList reviews={reviews} />
+                    <ReviewList book={book} />
                 </div> 
             </div>
       </main>
@@ -62,14 +62,11 @@ const BookView = () => {
   )
 }
 
-const BookDetails = (props) => {
-    var { book, loading } = props;
-
-    if (loading) return (
+const BookDetails = ({book}) => {
+    if (!book) return (
         <p className="text-small text-center text-indigo-500">Loading...</p>
     )
 
-    if(book && !loading){
     return (
     <div>
         <div className="flex justify-between gap-4">
@@ -97,64 +94,58 @@ const BookDetails = (props) => {
         <span>Downloads: {book.download_count}</span>
         </div>
     </div>
-    )}
+    )
 }
 
 
-const ReviewList = (props) => {
-    var { reviews, loading } = props;
-
-    if (loading) return <p className='text-small text-center text-indigo-500'>Loading...</p>
+const ReviewList = ({book}) => {
+    if (!book) return <p className='text-small text-center text-indigo-500'>Loading...</p>
     
-    if (!reviews && !loading) return (
+    if (book && book.reviews && !book.reviews.length) return (
         <p className='text-small text-center text-indigo-500'>
-            No reviews...
+            No reviews. Add the first!
         </p>
     )
-
-    if (reviews && !loading){
-        return (
-            <div>
-                {reviews?.map(review =>{
-                return (
-                <div className='py-4 my-4 border-b border-indigo-500' key={review.id}>
-                    <div className="flex justify-between gap-4">
-                        <p className='text-lg text-indigo-500'>
-                            Rating: {review.rating ? review.rating : "-"}/5
+    
+    return (
+        <div>
+            {book.reviews?.map(review =>{
+            return (
+            <div className='px-4 py-4 my-4 border-b border-indigo-500' key={review.id}>
+                <div className="flex justify-between gap-4">
+                    <p className='text-indigo-500'>
+                        Rating: {review.rating ? review.rating : "-"}/5
+                    </p>
+                    <p className='text-xs text-indigo-200'>
+                        {review.created_at}
+                    </p>
+                </div>
+                <div className="flex-col py-2 min-h-full">
+                    <p className='pt-1 text-xs text-blue-200 font-bold'>User commented:</p>
+                    <div className='rounded my-2'>
+                        <p className='text-sm py-2 px-4 text-blue-400 text-justify italic'>
+                            {review.comment ? review.comment : "User did not add a comment"}
                         </p>
-                        <p className='text-xs text-indigo-200'>
-                            {review.created_at}
-                        </p>
-                    </div>
-                    <div className="flex-col py-2 min-h-full">
-                        <p className='pt-1 text-sm text-blue-200 font-bold'>User commented:</p>
-                        <div className='rounded my-2'>
-                            <p className='py-2 px-4 text-blue-400 text-justify italic'>
-                                {review.comment ? review.comment : "User did not add a comment"}
-                            </p>
-                        </div>
                     </div>
                 </div>
-                )
-            })}
-        </div>
-        )
-    }
+            </div>
+            )
+        })}
+    </div>
+    )
 }
 
 
-const ReviewForm = (props) => {
-    var { book, reviews, setReviews } = props;
-
-    const [reviewState, setReviewState] = useState({
+export const ReviewForm = ({book, setBook}) => {
+    const [review, setReview] = useState({
         rating: 5,
-        comment: ""
-    });
+        comment: "",
+    })
 
     const [errors, setErrors] = useState({
         rating: "",
-        comment: ""
-    });
+        comment: "",
+    })
 
     async function postReview(){
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/book/${book.id}/post-review`, {
@@ -164,27 +155,32 @@ const ReviewForm = (props) => {
             },
             body: JSON.stringify({
                 book_id: book.id,
-                rating: parseFloat(reviewState.rating),
-                comment: reviewState.comment,
+                rating: parseFloat(review.rating),
+                comment: review.comment,
             })
         })
-        const json = await res.json();
-        setReviews([json, ...reviews ])
+
+        const newReview = await res.json();
+        setBook({
+            ...book,
+            reviews: [newReview, ...book.reviews]
+        })
     }
 
     function handleChange(e){
-        setReviewState({
-            ...reviewState,
+        setReview({
+            ...review,
             [e.target.name]: e.target.value,
-        });
+        })
     }
 
     const handleSubmit = e => {
         e.preventDefault();
         postReview();
-        setReviewState({
+
+        setReview({
             rating: 5,
-            comment: "",
+            comment: '',
         })
     }
 
@@ -194,7 +190,7 @@ const ReviewForm = (props) => {
             <div className="m-0 p-0">
                 <div className='flex'>
                     <span>Rating: </span>
-                    <select name="rating" value={reviewState.rating} onChange={handleChange} 
+                    <select name="rating" value={review.rating} onChange={handleChange} 
                         className="rounded bg-white text-black ml-2" required>       
                     <option value="5">5</option>
                     <option value="4">4</option>
@@ -209,7 +205,7 @@ const ReviewForm = (props) => {
                 </span>
             </div>
             <div className="p-0 m-0">
-                <textarea name="comment" value={reviewState.comment} onChange={handleChange} 
+                <textarea name="comment" value={review.comment} onChange={handleChange} 
                 className="
                     form-control
                     block
