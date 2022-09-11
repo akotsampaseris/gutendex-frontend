@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 
 export default function Home() {
   const router = useRouter();
-  const { title } = router.query;
 
   const [loading, setLoading] = useState(false);
   const [searchString, setSearchString] = useState('');
@@ -13,7 +12,7 @@ export default function Home() {
 
   async function fetchData(){
     try{
-      const res = await fetch(`http://localhost:8000/books/search?title=${searchString}`)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/search?title=${searchString}`)
       const json = await res.json();
       setBooks(json);
       setLoading(false);
@@ -87,14 +86,16 @@ function BookList({books, loading}){
       {books.map(book => (
         <div className="m-4 p-4 border border-indigo-500 rounded" key={book.id}>
           <div className="text-xl text-indigo-500">
-            <Link href={{pathname: `/books/book/${book.id}`}}>{book.title}</Link>
+            <Link href={{pathname: `/books/book/${book.id}`}}>
+              {book.title}
+            </Link>
           </div>
           <div className="flex">
             <p>Author(s): </p> 
             <ul className="list-none">
             {book.authors.map(author => {
               return (<li className="pl-2" key={author.name}>{author.name}</li>)
-            })} 
+            })}
             </ul>
           </div>
           <div className="text-xs text-indigo-500">Downloads: {book.download_count}</div>
