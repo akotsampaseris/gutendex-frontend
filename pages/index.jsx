@@ -34,39 +34,36 @@ export default function Home() {
 
 
   return (
-    <div className="container-md mx-auto px-4">
+    <div className="mx-auto">
       <Head>
         <title>Search Results | GutendexAPI</title>
         <meta name="description" content="NextJS app using GutendexAPI" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="w-full mt-2 m-0">
-        <div className="grid grid-cols-5 gap-2 border-b-2 border-indigo-500 w-full p-4">
-          <div>
-            <h1 className="text-2xl text-indigo-500">
-              <Link href="/">Search GutendexAPI</Link>
-            </h1>
-          </div>
-          <div className="col-span-4">
-            <form className="flex gap-2" onSubmit={handleSubmit}>
-              <input
-                placeholder='Moby Dick, Frankenstein etc'
-                type='text'
-                className='mt-1 block w-9/12 px-3 py-2 bg-white border border-slate-300 rounded-md text-black text-sm shadow-sm placeholder-slate-400
-                focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500'
-                value={searchString}
-                onChange={handleChange}
-              />
-              <button type="submit" className="w-3/12 rounded bg-indigo-400 hover:bg-indigo-600">
-                  Search
-              </button>
-            </form>
-          </div>
+      <div className="grid grid-cols-5 border-b-2 border-indigo-500 w-full p-6">
+        <div>
+          <h1 className="text-2xl text-indigo-500">
+            <Link href="/">Search GutendexAPI</Link>
+          </h1>
         </div>
-        <div className="mx-auto m-4 p-4 w-8/12">
-          <p className="text-2xl text-center">Results</p>
-          <BookList books={books} loading={loading} />
+        <div className="col-span-4">
+          <form className="flex gap-2" onSubmit={handleSubmit}>
+            <input
+              placeholder='Moby Dick, Frankenstein etc'
+              type='text'
+              className='mt-1 block w-9/12 px-3 py-2 bg-white border border-slate-300 rounded-md text-black text-sm shadow-sm placeholder-slate-400
+              focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500'
+              value={searchString}
+              onChange={handleChange}
+            />
+            <button type="submit" className="w-3/12 rounded bg-indigo-400 hover:bg-indigo-600">
+                Search
+            </button>
+          </form>
         </div>
+      </div>
+      <main className="mx-auto p-4 w-8/12">
+        <BookList books={books} loading={loading} />
       </main>
     </div>
   )
@@ -83,22 +80,22 @@ function BookList({books, loading}){
 
   return (
     <div>
-      {books.map(book => (
-        <div className="m-4 p-4 border border-indigo-500 rounded" key={book.id}>
+      {books?.map(book => (
+        <div className="my-2 py-4 border-b border-indigo-500" key={book.id}>
           <div className="text-xl text-indigo-500">
             <Link href={{pathname: `/books/book/${book.id}`}}>
               {book.title}
             </Link>
           </div>
-          <div className="flex">
-            <p>Author(s): </p> 
+          <div className="flex py-1">
+            <p className='text-md text-indigo-300'>Author(s): </p> 
             <ul className="list-none">
-            {book.authors.map(author => {
-              return (<li className="pl-2" key={author.name}>{author.name}</li>)
+            {book.authors?.map(author => {
+              return (<li className="pl-2 text-indigo-200" key={author.name}>{author.name}</li>)
             })}
             </ul>
           </div>
-          <div className="text-xs text-indigo-500">Downloads: {book.download_count}</div>
+          <div className="text-xs text-indigo-300">Downloads: {book.download_count}</div>
         </div>
         )
       )}

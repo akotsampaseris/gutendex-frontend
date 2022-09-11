@@ -15,6 +15,10 @@ a {
   text-decoration: none;
 }
 
+.text-justify {
+  text-align: justify;
+}
+
 * {
   box-sizing: border-box;
 }
