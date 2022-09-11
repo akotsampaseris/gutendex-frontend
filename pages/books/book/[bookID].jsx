@@ -32,27 +32,27 @@ const BookView = ({ data }) => {
             <meta name="description" content="NextJS app using Gutendex API" />
             <link rel="icon" href="/favicon.ico" />
         </Head>
-        <div className="grid grid-cols-5 gap-2 border-b-2 border-indigo-500 w-full p-4">
-            <div>
+        <div className="border-b-2 border-indigo-500 w-screen m-0 p-0">
+            <div className='p-4'>
                 <h1 className="text-2xl text-indigo-500">
                     <Link href="/">Search GutendexAPI</Link>
                 </h1>
             </div>
         </div>
-        <main className="h-0 px-4 mx-4 grid grid-cols-2 gap-4">   
+        <main className="h-0 lg:px-4 lg:mx-4 md:flex-col lg:grid lg:grid-cols-2 lg:gap-4">   
             <div>
-                <div className="m-2 p-4">        
+                <div className="m-2 p-4 md:p-0">        
                     <BookDetails book={book} />
                 </div>  
-                <div className="m-2 p-4">
+                <div className="m-2 p-4 md:p-0">
                     <p className="text-xl text-blue-400">Your review of 
                         <span className='text-blue-500 italic'> {book.title}</span>.
                     </p>
                     <ReviewForm book={book} setBook={setBook} />
                 </div>
             </div>  
-            <div className='h-full overflow-y-auto'>
-                <div className="m-2 p-4">    
+            <div className='h-full lg:overflow-y-auto'>
+                <div className="m-2 p-4 md:p-0">    
                     <p className='text-2xl text-blue-400'>Reviews</p>
                     <ReviewList book={book} />
                 </div> 
@@ -69,7 +69,7 @@ const BookDetails = ({book}) => {
 
     return (
     <div>
-        <div className="flex justify-between gap-4">
+        <div className="lg:flex md:flex-col justify-between gap-2">
         <Link href={{pathname: `/books/book/${book.id}`}}>
             <span className="text-2xl text-indigo-500">{book.title}</span>
         </Link>
@@ -78,20 +78,19 @@ const BookDetails = ({book}) => {
         </p>
         </div>
         <div className="flex">
-        <span className="text-md text-indigo-300">Author(s): </span> 
-        <ul className="list-none">
-        {book.authors?.map(author => {
-            return (
-            <li className="pl-2 text-indigo-200" key={author.name}>
-                {author.name}
-            </li>)
-        })}
-        </ul>
+            <ul className="list-none">
+            {book.authors?.map(author => {
+                return (
+                <li className="text-indigo-200" key={author.name}>
+                    {author.name}
+                </li>)
+            })}
+            </ul>
         </div>
         <div className="text-xs text-indigo-300 pt-1">
-        <span>Languages: {book.languages}</span> 
-        <span> | </span> 
-        <span>Downloads: {book.download_count}</span>
+            <span>Languages: {book.languages}</span> 
+            <span> | </span> 
+            <span>Downloads: {book.download_count}</span>
         </div>
     </div>
     )
@@ -112,7 +111,7 @@ const ReviewList = ({book}) => {
             {book.reviews?.map(review =>{
             return (
             <div className='px-4 py-4 my-4 border-b border-indigo-500' key={review.id}>
-                <div className="flex justify-between gap-4">
+                <div className="lg:flex md:flex-col justify-between gap-4">
                     <p className='text-indigo-500'>
                         Rating: {review.rating ? review.rating : "-"}/5
                     </p>
